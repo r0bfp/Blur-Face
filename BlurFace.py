@@ -1,33 +1,52 @@
+# -*- coding: utf-8 -*-
+
 import cv2
 import sys
+import numpy
 
 
-#argumentos de entrada para imagem e classificadores
-imagePath = sys.argv[1]
+#argumento para entrada de arquivos de video
+video = sys.argv[1]
+#argumento para entrada de classificadores
 cascPath = sys.argv[2]
 
-#criacao do classificador
+#carrega o arquivo de classificacao treinado
 faceCascades = cv2.CascadeClassifier(cascPath)
 
-#leitura da imagem
-image = cv2.imread(imagePath)
-#converte imagem em cinza
-gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#capturando o video
+cap = cv2.VideoCapture(video)
 
-#deteca a face
-faces = faceCascades.detectMultiScale(
-    gray,
-    scaleFactor=1.1,
-    minNeighbors=5,
-    minSize=(30, 30),
-    flags=cv2.CASCADE_SCALE_IMAGE
-)
+while(1):
+    #lendo a imagem
+    ret, frame = cap.read()
+    #passando a imagem para cinza
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
-#desenha um retangulo na face
-for (x, y, w, h) in faces:
-    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    #localizando faces
+    faces = faceCascades.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30,30),
+        flags=cv2.CASCADE_SCALE_IMAGE
+    )
 
-#mostra a imagem
-cv2.imshow("Faces found", image)
-#espera uma tecla para fechar o programa
-cv2.waitKey(0)
+    #desenhando circulos na face encontrada
+    for (x,y,w,h) in faces:
+        #encontrando ponto central do retangulo
+        center = (x+w//2, y+h//2)
+        #encontrando o raio do circulo
+        radius = (w+h)//4
+
+        #desenhando circulo 
+        cv2.circle(frame, center, radius, (255, 0, 255), -1)
+
+        #exibindo o frame processado
+        cv2.imshow('frame', frame)
+
+    #aguardando tecla para finalizar o programa
+    if cv2.waitKey(1) == ord('q'):
+        break
+
+#destroi todas janelas abertas 
+cv2.destroyAllWindows()
