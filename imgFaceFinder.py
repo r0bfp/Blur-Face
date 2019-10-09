@@ -1,7 +1,6 @@
 import cv2
 import sys
 
-
 #argumentos de entrada para imagem e classificadores
 imagePath = sys.argv[1]
 cascPath = sys.argv[2]
@@ -24,8 +23,11 @@ faces = faceCascades.detectMultiScale(
 )
 
 #desenha um retangulo na face
-for (x, y, w, h) in faces:
-    cv2.rectangle(image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+for (x, y, w, h) in faces:    
+    print type(image)
+    image[x:x+w, y:y+h] = cv2.blur(image[x:x+w, y:y+h], (40, 40))
+
+
 
 #mostra a imagem
 cv2.imshow("Faces found", image)
