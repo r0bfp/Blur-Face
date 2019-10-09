@@ -4,7 +4,6 @@ import cv2
 import sys
 import numpy
 
-
 #argumento para entrada de arquivos de video
 video = sys.argv[1]
 #argumento para entrada de classificadores
@@ -31,18 +30,12 @@ while(1):
         flags=cv2.CASCADE_SCALE_IMAGE
     )
 
-    #desenhando circulos na face encontrada
-    for (x,y,w,h) in faces:
-        #encontrando ponto central do retangulo
-        center = (x+w//2, y+h//2)
-        #encontrando o raio do circulo
-        radius = (w+h)//4
-
-        #desenhando circulo 
-        cv2.circle(frame, center, radius, (255, 0, 255), -1)
+    for (x, y, w, h) in faces:
+        frame[x:x+w, y:y+h] = cv2.blur(frame[x:x+w, y:y+h], (23, 23))
 
         #exibindo o frame processado
         cv2.imshow('frame', frame)
+
 
     #aguardando tecla para finalizar o programa
     if cv2.waitKey(1) == ord('q'):
